@@ -14,7 +14,29 @@ function sshd_restart {
 function config_ssh {
 	#Option 3a
 	#Making a backup
-	cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+	ls /etc/ssh/sshd_config.bk &> /dev/null
+	if [ $? == "0" ]
+	then
+		echo "---------------------"
+		echo "Backup already exists"
+		echo "---------------------"
+	else
+		echo "-------------------------------------"
+		echo "Backup doesn't exist, creating one..."
+		echo "-------------------------------------"
+		sleep 1
+		cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bk
+		if [ $? == "0" ]
+		then
+			echo "---------------"
+			echo "Backup created!"
+			echo "---------------"
+		else
+			echo "-------------------------------------------------------"
+			echo "Something went wrong during the creation of the backup!"
+			echo "-------------------------------------------------------"
+		fi
+	fi
 
 	echo "Would you like to change SSH's port number? [y|n]: "
 	read SSH_ANSWER1
@@ -91,7 +113,45 @@ function config_ssh {
 		echo "---------------------------"
 	fi
 
-	# Passwordless - disabling plain passwd login and enabling a login using a keypair
+	echo "Would you like to disable password login and enable keypair auth? [y|n]: "
+	read $SSH_ANSWER7
+	if [[ $SSH_ANSWER7 == 'y' || $SSH_ANSWER7 == 'Y' ]]
+	then
+		echo "----------------------------------------------------------------------------------------------------------"
+	        echo "Before proceeding, please copy your public key to your this server/host."
+	        echo "If you don't have a keypair generated, you can use the command below on your local machine to generate it:"
+	        echo
+	        echo "ssh-keygen -t rsa -b 4092"
+	        echo
+	        echo "To copy it, you can use the command below:"
+	        echo
+	        echo "ssh-copy-id username@publicIpAddrOfThisHost"
+	        echo
+	        echo "Failure to do this step will result in a lockout"
+	        echo "----------------------------------------------------------------------------------------------------------"
+	        echo 
+	        echo "Are you sure you did the step above and you want to continue? [type 'proceed' to continue]"
+		read LOCKOUT
+		if [[ $LOCKOUT == "proceed" || $LOCKOUT == "PROCEED" ]]
+		then
+			echo ">>>Proceeding with passwordless step..."
+		        sed -i 's/PasswordAuthentication\ yes/PasswordAuthentication\ no/g' /etc/ssh/sshd_config
+		        sed -i 's/UsePAM\ yes/UsePAM\ no/g' /etc/ssh/sshd_config
+		        sed -i 's/ChallengeResponseAuthentication\ yes/ChallengeResponseAuthentication\ no/g' /etc/ssh/sshd_config
+		        echo "------------------------"
+		        echo "Password login disabled!"
+		        echo "------------------------"
+		else
+			echo "-------------------"
+			echo "Skipping the step!!"
+			echo "-------------------"
+		fi
+	else
+		echo "------------------------------"
+		echo "Leaving password auth enabled!"
+		echo "------------------------------"
+	fi
+
 
 	echo "-----------------------------------------------------------------------------"
 	echo "Please reset the SSH daemon(service) in order for the changes to take effect!"
@@ -313,7 +373,7 @@ function show_ports {
 }
 
 function revert_changes {
-	rm /etc/ssh/sshd_config && cp /etc/ssh/sshd_config.bak /etc/ssh/sshd_config
+	rm /etc/ssh/sshd_config && cp /etc/ssh/sshd_config.bk /etc/ssh/sshd_config
 }
 
 if [ $EUID != 0 ]; then
