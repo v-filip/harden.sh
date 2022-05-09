@@ -27,13 +27,11 @@ function config_ssh {
 		read SSH_ANSWER2
 		if [[ $SSH_ANSWER2 == 'y' || $SSH_ANSWER2 == 'Y' ]]
 		then
-			#Use port 222
 			sed -i 's/\#Port\ 22/Port\ 222/g' /etc/ssh/sshd_config
 			echo "---------------------------------"
 			echo "SSH's port number changed to 222!"
 			echo "---------------------------------"
 		else
-			#Do not use port 222 and prompt the user for their port number of choice
 			echo "Understood, which port number would you like to use? [Please enter the port number]: "
 			read SSH_ANSWER3
 			sed -i s/\#Port\ 22/Port\ $SSH_ANSWER3/g /etc/ssh/sshd_config
