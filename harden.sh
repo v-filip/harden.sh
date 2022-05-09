@@ -91,7 +91,7 @@ function config_ssh {
 		echo "---------------------------"
 	fi
 
-	# Passwordless - disabling plain passwd login and enabling a login using a keypair
+	## Passwordless - disabling plain passwd login and enabling a login using a keypair
 
 	echo "-----------------------------------------------------------------------------"
 	echo "Please reset the SSH daemon(service) in order for the changes to take effect!"
