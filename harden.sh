@@ -14,10 +14,7 @@ function sshd_restart {
 function config_ssh {
 	#Option 3a
 	#Making a backup
-<<<<<<< HEAD
-=======
 	
->>>>>>> passwordless
 	ls /etc/ssh/sshd_config.bk &> /dev/null
 	if [ $? == "0" ]
 	then
@@ -117,144 +114,11 @@ function config_ssh {
 		echo "---------------------------"
 	fi
 
-<<<<<<< HEAD
-	echo "Would you like to disable password login and enable keypair auth? [y|n]: "
-	read $SSH_ANSWER7
-	if [[ $SSH_ANSWER7 == 'y' || $SSH_ANSWER7 == 'Y' ]]
-	then
-		echo "----------------------------------------------------------------------------------------------------------"
-	        echo "Before proceeding, please copy your public key to your this server/host."
-	        echo "If you don't have a keypair generated, you can use the command below on your local machine to generate it:"
-	        echo
-	        echo "ssh-keygen -t rsa -b 4092"
-	        echo
-	        echo "To copy it, you can use the command below:"
-	        echo
-	        echo "ssh-copy-id username@publicIpAddrOfThisHost"
-	        echo
-	        echo "Failure to do this step will result in a lockout"
-	        echo "----------------------------------------------------------------------------------------------------------"
-	        echo 
-	        echo "Are you sure you did the step above and you want to continue? [type 'proceed' to continue]"
-		read LOCKOUT
-		if [[ $LOCKOUT == "proceed" || $LOCKOUT == "PROCEED" ]]
-		then
-			echo ">>>Proceeding with passwordless step..."
-		        sed -i 's/PasswordAuthentication\ yes/PasswordAuthentication\ no/g' /etc/ssh/sshd_config
-		        sed -i 's/UsePAM\ yes/UsePAM\ no/g' /etc/ssh/sshd_config
-		        sed -i 's/ChallengeResponseAuthentication\ yes/ChallengeResponseAuthentication\ no/g' /etc/ssh/sshd_config
-		        echo "------------------------"
-		        echo "Password login disabled!"
-		        echo "------------------------"
-		else
-			echo "-------------------"
-			echo "Skipping the step!!"
-			echo "-------------------"
-		fi
-	else
-		echo "------------------------------"
-		echo "Leaving password auth enabled!"
-		echo "------------------------------"
-	fi
-
-=======
-	## Passwordless - disabling plain passwd login and enabling a login using a keypair
->>>>>>> passwordless
+	#Passwordless
 
 	echo "-----------------------------------------------------------------------------"
 	echo "Please reset the SSH daemon(service) in order for the changes to take effect!"
-	echo "-----------------------------------------------------------------------------"
-}
-
-function ufw_installed {
-	#UFW precheck
-	ufw status &> /dev/null
-	if [ $? == "0" ]
-	then
-		echo "----------------------------------"
-		echo "UFW package exists on the machine!"
-		echo "----------------------------------"
-	else
-		echo "--------------------------------------------------------"
-		echo "UFW package is not installed - installing the package..."
-		echo "--------------------------------------------------------"
-		apt install ufw -y &> /dev/null
-		if [ $? == "0" ]
-		then
-			echo "--------------"
-			echo "UFW installed!"
-			echo "--------------"
-		else
-			echo "-------------------------------------------------------------------------"
-			echo "Something went wrong during the installation, please install it manually!"
-			echo "-------------------------------------------------------------------------"
-		fi
-	fi
-}
-
-function awk_ufw {
-	ufw status | grep Status | awk '{print $2}'
-}
-
-function ufw_status {
-	#Option 1b
-	#Checking whether ufw is installed
-	ufw_installed
-
-	local CHECK_STATUS=$(awk_ufw)
-	if [ $CHECK_STATUS == "active" ]
-	then
-		echo "-------------------------"
-		echo "Host firewall is enabled!"
-		echo "-------------------------"
-	elif [ $CHECK_STATUS == "inactive" ]
-	then
-		echo "--------------------------"
-		echo "Host firewall is disabled!"
-		echo "--------------------------"
-	else
-		echo "-----------------------------------------------------------------------------------"
-		echo "Unknown reading, unable to determine whether host firewall is enabled or disabled!"
-		echo "-----------------------------------------------------------------------------------"
-	fi
-}
-
-function ufw_enable {
-	#Option 2b
-	#Checking whether ufw is installed
-	ufw_installed
-	
-	local CHECK_STATUS=$(awk_ufw)
-	if [ $CHECK_STATUS == "active" ]
-	then
-		echo "----------------------------"
-		echo "Firewall is already enabled!"
-		echo "----------------------------"
-	else
-		echo "Before you enable the firewall, please ensure that at least inbound port for your ssh connection is open, "
-	        echo "otherwise you'll be locked out if ssh is the only way to access the system!"
-		echo "[Please type \"understood\" to continue]: " 
-		read UNDERSTOOD_PROMPT
-		if [[ $UNDERSTOOD_PROMPT == "understood" || $UNDERSTOOD_PROMPT == "UNDERSTOOD" ]]
-		then
-			echo y | ufw enable &> /dev/null
-			if [ $? == "0" ]
-			then
-				echo "-----------------"
-				echo "Firewall enabled!"
-				echo "-----------------"
-			else
-				echo "------------------------------------------------------------------------------------------------------"
-				echo "Something went wrong during the process, unsure whether firewall was enabled, please recheck manually!"
-				echo "------------------------------------------------------------------------------------------------------"
-			fi
-		else
-			echo "------------------------------------------------------"
-			echo "Skipping the step since \"understood\" wasn't entered!"
-			echo "------------------------------------------------------"
-		fi
-	fi
-		
+	echo "-----------------------------------------------------------------------------"		
 }
 
 function ufw_disable {
