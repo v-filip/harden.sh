@@ -127,6 +127,44 @@ function ufw_disable {
 	fi
 }
 
+function config_ufw {
+	echo "Would you like to allow inbound port 22? [y|n]: "
+	read UFW_ANSWER1
+	echo "Would you like to allow inbound port 222? [y|n] "
+	read UFW_ANSWER2
+
+	ufw_disable	
+	ufw default deny incoming &> /dev/null
+	ufw default allow outgoing &> /dev/null
+	if [[ $UFW_ANSWER1 == 'y' || $UFW_ANSWER1 == 'Y' ]]
+	then
+		ufw allow ssh &> /dev/null
+		echo "------------------------"
+		echo "Inbound port 22 allowed!"
+		echo "------------------------"
+	else
+		ufw deny ssh &> /dev/null
+		echo "----------------------------------"
+		echo "Leaving inbound port 22 as denied!"
+		echo "----------------------------------"
+	fi
+	if [[ $UFW_ANSWER2 == 'y' || $UFW_ANSWER2 == 'Y' ]]
+	then
+		ufw allow 222 &> /dev/null
+		echo "-------------------------"
+		echo "Inbound port 222 allowed!"
+		echo "-------------------------"
+	else
+		ufw deny 222 &> /dev/null
+		echo "-----------------------------------"
+		echo "Leaving inbound port 222 as denied!"
+		echo "-----------------------------------"
+	fi 
+	echo "-------------------------------------------------------------"
+	echo "Leaving the firewall disabled, please enabled it if you wish!"
+	echo "-------------------------------------------------------------"
+}
+
 if [ $EUID != 0 ]; then
     sudo "$0" "$@"
     exit $?
@@ -193,9 +231,9 @@ do
 			;;
 
 		4b)
-			#config ufw
-			#function
+			config_ufw
 			;;
+
 		5b)
 			#allow deny inbound port
 			#function
