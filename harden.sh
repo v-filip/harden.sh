@@ -75,6 +75,23 @@ function config_ssh {
 		echo "Skipping the step! Leaving it disabled..."
 		echo "-----------------------------------------"
 	fi
+
+	echo "Would you like to disable Protocol 1? [y|n]: "
+	read SSH_ANSWER6
+
+	if [[ $SSH_ANSWER6 == 'y' || $SSH_ANSWER6 == 'Y' ]]
+	then
+		sed -i 's/\#\ default value./Protocol\ 2/g' /etc/ssh/sshd_config
+		echo "-------------------"
+		echo "Protocol 1 disabled"
+		echo "-------------------"
+	else
+		echo "---------------------------"
+		echo "Leaving Protocol 1 enabled!"
+		echo "---------------------------"
+	fi
+
+
 	echo "-----------------------------------------------------------------------------"
 	echo "Please reset the SSH daemon(service) in order for the changes to take effect!"
 	echo "-----------------------------------------------------------------------------"
