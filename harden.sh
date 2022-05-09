@@ -184,7 +184,8 @@ do
 	echo "3b) UFW disable"
 	echo "4b) Configure UFW"
 	echo "5b) Allow/Deny inbound port"
-	echo "x) exit"
+	echo "c) Clear terminal"
+	echo "x) Exit"
 	echo "---------------------------"
 	read -p "Please make your selection: [ex. 1a] " ANSWER
 	echo
@@ -243,6 +244,12 @@ do
 #			#function
 #			;;
 
+		c)
+			clear
+			echo "------------------"
+			echo "Terminal clearned!"
+			echo "------------------"
+			;;
 
 		x)
 			echo "--------------------------------------"
