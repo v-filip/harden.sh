@@ -128,14 +128,31 @@ function ufw_disable {
 }
 
 function config_ufw {
+	echo "Would you like to deny inbound traffic/allow outbound traffic by default? [y|n]"
+	read UFW_ANSWER0
 	echo "Would you like to allow inbound port 22? [y|n]: "
 	read UFW_ANSWER1
 	echo "Would you like to allow inbound port 222? [y|n] "
 	read UFW_ANSWER2
 
-	ufw_disable	
-	ufw default deny incoming &> /dev/null
-	ufw default allow outgoing &> /dev/null
+	ufw_disable
+
+	if [[ $UFW_ANSWER0 == 'y' || $UFW_ANSWER0 == 'Y' ]]
+	then
+		ufw default deny incoming &> /dev/null
+		echo "----------------------------------------------"
+		echo "Denying unspecified incoming ports by default!"
+		echo "----------------------------------------------"
+		ufw default allow outgoing &> /dev/null
+		echo "-----------------------------------------------"
+		echo "Allowing unspecified outbound ports by default!"
+		echo "-----------------------------------------------"
+	else
+		echo "---------------------------------------------------"
+		echo "Leaving default settings as they are at the moment!"
+		echo "---------------------------------------------------"
+	fi	
+
 	if [[ $UFW_ANSWER1 == 'y' || $UFW_ANSWER1 == 'Y' ]]
 	then
 		ufw allow ssh &> /dev/null
@@ -148,6 +165,7 @@ function config_ufw {
 		echo "Leaving inbound port 22 as denied!"
 		echo "----------------------------------"
 	fi
+
 	if [[ $UFW_ANSWER2 == 'y' || $UFW_ANSWER2 == 'Y' ]]
 	then
 		ufw allow 222 &> /dev/null
@@ -160,6 +178,7 @@ function config_ufw {
 		echo "Leaving inbound port 222 as denied!"
 		echo "-----------------------------------"
 	fi 
+
 	echo "-------------------------------------------------------------"
 	echo "Leaving the firewall disabled, please enabled it if you wish!"
 	echo "-------------------------------------------------------------"
