@@ -18,7 +18,7 @@ function config_ssh {
 }
 
 function ufw_installed {
-	#Option 1b
+	#UFW precheck
 	ufw status &> /dev/null
 	if [ $? == "0" ]
 	then
@@ -44,6 +44,7 @@ function ufw_installed {
 }
 
 function ufw_status {
+	#Option 1b
 	#Checking whether ufw is installed
 	ufw_installed
 
@@ -64,6 +65,11 @@ function ufw_status {
 		echo "-----------------------------------------------------------------------------------"
 	fi
 }
+
+if [ $EUID != 0 ]; then
+    sudo "$0" "$@"
+    exit $?
+fi
 
 while true
 do
