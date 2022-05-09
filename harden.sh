@@ -108,6 +108,25 @@ function ufw_enable {
 		
 }
 
+function ufw_disable {
+	#Option 3b
+	#Checking whether ufw is installed
+	ufw_installed
+	
+	local CHECK_STATUS=$(awk_ufw)
+	if [ $CHECK_STATUS == "inactive" ]
+	then
+		echo "----------------------------"
+		echo "Firewall is already disabled"
+		echo "----------------------------"
+	else
+		ufw disable &> /dev/null
+		echo "------------------"
+		echo "Firewall disabled!"
+		echo "------------------"
+	fi
+}
+
 if [ $EUID != 0 ]; then
     sudo "$0" "$@"
     exit $?
@@ -115,12 +134,12 @@ fi
 
 while true
 do
-	echo "----------------------------"
+	echo "---------------------------"
 	echo "SSH OPTIONS"
 	echo "1a) SSHd status"
 	echo "2a) SSHd restart"
 	echo "3a) Configure SSH"
-	echo "----------------------------"
+	echo "---------------------------"
 	echo "FIREWALL OPTIONS"
 	echo "1b) UFW status"
 	echo "2b) UFW enable"
@@ -128,7 +147,7 @@ do
 	echo "4b) Configure UFW"
 	echo "5b) Allow/Deny inbound port"
 	echo "x) exit"
-	echo "------_---------------------"
+	echo "---------------------------"
 	read -p "Please make your selection: [ex. 1a] " ANSWER
 	echo
 	case $ANSWER in 
@@ -152,6 +171,7 @@ do
 			echo "Done! SSH configured!"
 			echo "---------------------"
 			;;
+
 #		4a)
 #			#extra
 #			#function
@@ -163,13 +183,15 @@ do
 			echo "UFW status displyed!"
 			echo "--------------------"
 			;;
+
 		2b)
 			ufw_enable
 			;;
+
 		3b)
-			#ufw disable
-			#function
+			ufw_disable
 			;;
+
 		4b)
 			#config ufw
 			#function
