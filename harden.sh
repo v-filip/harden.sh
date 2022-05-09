@@ -14,7 +14,30 @@ function sshd_restart {
 function config_ssh {
 	#Option 3a
 	#Making a backup
-	cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+	
+	ls /etc/ssh/sshd_config.bk &> /dev/null
+	if [ $? == "0" ]
+	then
+		echo "---------------------"
+		echo "Backup already exists"
+		echo "---------------------"
+	else
+		echo "-------------------------------------"
+		echo "Backup doesn't exist, creating one..."
+		echo "-------------------------------------"
+		sleep 1
+		cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bk
+		if [ $? == "0" ]
+		then
+			echo "---------------"
+			echo "Backup created!"
+			echo "---------------"
+		else
+			echo "-------------------------------------------------------"
+			echo "Something went wrong during the creation of the backup!"
+			echo "-------------------------------------------------------"
+		fi
+	fi
 
 	echo "Would you like to change SSH's port number? [y|n]: "
 	read SSH_ANSWER1
@@ -313,7 +336,7 @@ function show_ports {
 }
 
 function revert_changes {
-	rm /etc/ssh/sshd_config && cp /etc/ssh/sshd_config.bak /etc/ssh/sshd_config
+	rm /etc/ssh/sshd_config && cp /etc/ssh/sshd_config.bk /etc/ssh/sshd_config
 }
 
 if [ $EUID != 0 ]; then
