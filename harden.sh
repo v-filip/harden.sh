@@ -221,6 +221,16 @@ function allow_deny_port {
 	fi
 }
 
+function show_ports {
+	echo "-------------------------------"
+	echo "Ports that are currenly ALLOWED"
+	ufw status | awk '/ALLOW/ {print $1}' | sort | uniq
+	echo "-------------------------------"
+	echo "Ports that are currently DENIED"
+	ufw status | awk '/DENY/ {print $1}' | sort | uniq
+	echo "-------------------------------"
+}
+
 if [ $EUID != 0 ]; then
     sudo "$0" "$@"
     exit $?
@@ -240,6 +250,7 @@ do
 	echo "3b) UFW disable"
 	echo "4b) Configure UFW"
 	echo "5b) Allow/Deny inbound port"
+	echo "6b) Show Allowed/Denied ports"
 	echo "c) Clear terminal"
 	echo "x) Exit"
 	echo "---------------------------"
@@ -295,10 +306,9 @@ do
 			allow_deny_port
 			;;
 
-#		6b)
-#			#extra
-#			#function
-#			;;
+		6b)
+			show_ports
+			;;
 
 		c)
 			clear
