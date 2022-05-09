@@ -57,6 +57,27 @@ function config_ssh {
 		echo "Leaving root login enabled!"
 		echo "---------------------------"
 	fi
+
+	echo "Would you that ssh connection terminates after a certion amount of time left idle? [y|n]: ]"
+	read SSH_ANSWER5
+
+	if [[ $SSH_ANSWER5 == 'y' || $SSH_ANSWER5 == 'Y' ]]
+	then
+		echo "After how much minutes of idle would you like to that the ssh conection terminates?"
+		echo "[Please enter the time in seconds ex. 180]"
+		read SSH_ANSWER6 
+		sed -i s/\#ClientAliveInterval\ 0/ClientAliveInterval\ $SSH_ANSWER6/g /etc/ssh/sshd_config
+		echo "----------------------------------------------------------------------"
+		echo "Done! Idle connections will now terminate after $SSH_ANSWER6 second(s)"
+		echo "----------------------------------------------------------------------"
+	else
+		echo "-----------------------------------------"
+		echo "Skipping the step! Leaving it disabled..."
+		echo "-----------------------------------------"
+	fi
+	echo "-----------------------------------------------------------------------------"
+	echo "Please reset the SSH daemon(service) in order for the changes to take effect!"
+	echo "-----------------------------------------------------------------------------"
 }
 
 function ufw_installed {
