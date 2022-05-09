@@ -43,18 +43,22 @@ function ufw_installed {
 	fi
 }
 
+function awk_ufw {
+	ufw status | grep Status | awk '{print $2}'
+}
+
 function ufw_status {
 	#Option 1b
 	#Checking whether ufw is installed
 	ufw_installed
 
-	UFW_STATUS=$(ufw status | grep Status | awk '{print $2}')
-	if [ $UFW_STATUS == "active" ]
+	local CHECK_STATUS=$(awk_ufw)
+	if [ $CHECK_STATUS == "active" ]
 	then
 		echo "-------------------------"
 		echo "Host firewall is enabled!"
 		echo "-------------------------"
-	elif [ $UFW_STATUS == "inactive" ]
+	elif [ $CHECK_STATUS == "inactive" ]
 	then
 		echo "--------------------------"
 		echo "Host firewall is disabled!"
@@ -64,6 +68,44 @@ function ufw_status {
 		echo "Unknown reading, unable to determine whether host firewall is enabled or disabled!"
 		echo "-----------------------------------------------------------------------------------"
 	fi
+}
+
+function ufw_enable {
+	#Option 2b
+	#Checking whether ufw is installed
+	ufw_installed
+	
+	local CHECK_STATUS=$(awk_ufw)
+	if [ $CHECK_STATUS == "active" ]
+	then
+		echo "----------------------------"
+		echo "Firewall is already enabled!"
+		echo "----------------------------"
+	else
+		echo "Before you enable the firewall, please ensure that at least inbound port for your ssh connection is open, "
+	        echo "otherwise you'll be locked out if ssh is the only way to access the system!"
+		echo "[Please type \"understood\" to continue]: " 
+		read UNDERSTOOD_PROMPT
+		if [[ $UNDERSTOOD_PROMPT == "understood" || $UNDERSTOOD_PROMPT == "UNDERSTOOD" ]]
+		then
+			echo y | ufw enable &> /dev/null
+			if [ $? == "0" ]
+			then
+				echo "-----------------"
+				echo "Firewall enabled!"
+				echo "-----------------"
+			else
+				echo "------------------------------------------------------------------------------------------------------"
+				echo "Something went wrong during the process, unsure whether firewall was enabled, please recheck manually!"
+				echo "------------------------------------------------------------------------------------------------------"
+			fi
+		else
+			echo "------------------------------------------------------"
+			echo "Skipping the step since \"understood\" wasn't entered!"
+			echo "------------------------------------------------------"
+		fi
+	fi
+		
 }
 
 if [ $EUID != 0 ]; then
@@ -122,8 +164,7 @@ do
 			echo "--------------------"
 			;;
 		2b)
-			#ufw enable
-			#function
+			ufw_enable
 			;;
 		3b)
 			#ufw disable
