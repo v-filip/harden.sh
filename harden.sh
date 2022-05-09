@@ -2,15 +2,67 @@
 #Author: v-filip
 
 function sshd_status {
+	#Option 1a
 	systemctl status ssh || service ssh status
 }
 
 function sshd_restart {
+	#Option 2a
 	systemctl restart ssh || service ssh restart
 }
 
 function config_ssh {
+	#Option 3a
 	#code
+	echo "Under contraction"
+}
+
+function ufw_installed {
+	#Option 1b
+	ufw status &> /dev/null
+	if [ $? == "0" ]
+	then
+		echo "----------------------------------"
+		echo "UFW package exists on the machine!"
+		echo "----------------------------------"
+	else
+		echo "--------------------------------------------------------"
+		echo "UFW package is not installed - installing the package..."
+		echo "--------------------------------------------------------"
+		apt install ufw -y &> /dev/null
+		if [ $? == "0" ]
+		then
+			echo "--------------"
+			echo "UFW installed!"
+			echo "--------------"
+		else
+			echo "-------------------------------------------------------------------------"
+			echo "Something went wrong during the installation, please install it manually!"
+			echo "-------------------------------------------------------------------------"
+		fi
+	fi
+}
+
+function ufw_status {
+	#Checking whether ufw is installed
+	ufw_installed
+
+	UFW_STATUS=$(ufw status | grep Status | awk '{print $2}')
+	if [ $UFW_STATUS == "active" ]
+	then
+		echo "-------------------------"
+		echo "Host firewall is enabled!"
+		echo "-------------------------"
+	elif [ $UFW_STATUS == "inactive" ]
+	then
+		echo "--------------------------"
+		echo "Host firewall is disabled!"
+		echo "--------------------------"
+	else
+		echo "-----------------------------------------------------------------------------------"
+		echo "Unknown reading, unable to determine whether host firewall is enabled or disabled!"
+		echo "-----------------------------------------------------------------------------------"
+	fi
 }
 
 while true
@@ -58,8 +110,10 @@ do
 #			;;
 
 		1b)
-			#ufw status
-			#function
+			ufw_status
+			echo "--------------------"
+			echo "UFW status displyed!"
+			echo "--------------------"
 			;;
 		2b)
 			#ufw enable
