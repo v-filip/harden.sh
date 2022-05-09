@@ -112,6 +112,8 @@ function config_ssh {
 		echo "Leaving Protocol 1 enabled!"
 		echo "---------------------------"
 	fi
+	
+	#Passwordless
 
 	echo "-----------------------------------------------------------------------------"
 	echo "Please reset the SSH daemon(service) in order for the changes to take effect!"
