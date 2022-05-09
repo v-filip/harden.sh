@@ -18,8 +18,6 @@ function config_ssh {
 
 	echo "Would you like to change SSH's port number? [y|n]: "
 	read SSH_ANSWER1
-	echo "Would you like to disable root? [y|n]: "
-	read SSH_ANSWER1_1
 
 	if [[ $SSH_ANSWER1 == 'y' || $SSH_ANSWER1 == 'Y' ]]
 	then
@@ -44,11 +42,20 @@ function config_ssh {
 		echo "Leaving SSH's port on 22!"
 		echo "-------------------------"
 	fi
-	if [[ $SSH_ANSWER1_1 == 'y' || $SSH_ANSWER1_1 == 'Y' ]]
+
+	echo "Would you like to disable root? [y|n]: "
+	read SSH_ANSWER4
+
+	if [[ $SSH_ANSWER4 == 'y' || $SSH_ANSWER4 == 'Y' ]]
 	then
-		echo "Allow root login"
+		sed -i 's/PermitRootLogin\ yes/PermitRootLogin\ no/g' /etc/ssh/sshd_config
+		echo "-------------------"
+		echo "Root login disabled"
+		echo "-------------------"
 	else
-		echo "Disable root login"
+		echo "---------------------------"
+		echo "Leaving root login enabled!"
+		echo "---------------------------"
 	fi
 }
 
