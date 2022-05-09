@@ -184,6 +184,43 @@ function config_ufw {
 	echo "-------------------------------------------------------------"
 }
 
+function allow_deny_port {
+	echo "Would you like to 1) allow or 2) deny traffic incoming on a specific port? [1|2]: "
+	read PORT_ANSWER1
+	if [ $PORT_ANSWER1 == "1" ]
+	then
+		#Allow
+		echo "Which port would you like to allow? [Please enter the port number]: "
+		read PORT_ANSWER2
+		ufw allow $PORT_ANSWER2 &> /dev/null
+		if [ $? == "0" ]
+		then
+			echo "---------------------------"
+			echo "Port $PORT_ANSWER2 allowed!"
+			echo "---------------------------"
+		else
+			echo "---------------------------------------"
+			echo "Something went wrong, please try again!"
+			echo "---------------------------------------"
+		fi
+	else
+		#Deny
+		echo "Which port would you like to deny? [Please enter the port number]: "
+		read PORT_ANSWER3
+		ufw deny $PORT_ANSWER3 &> /dev/null
+		if [ $? == "0" ]
+		then
+			echo "--------------------------"
+			echo "Port $PORT_ANSWER3 denied!"
+			echo "--------------------------"
+		else
+			echo "---------------------------------------"
+			echo "Something went wrong, please try again!"
+			echo "---------------------------------------"
+		fi
+	fi
+}
+
 if [ $EUID != 0 ]; then
     sudo "$0" "$@"
     exit $?
@@ -255,9 +292,9 @@ do
 			;;
 
 		5b)
-			#allow deny inbound port
-			#function
+			allow_deny_port
 			;;
+
 #		6b)
 #			#extra
 #			#function
