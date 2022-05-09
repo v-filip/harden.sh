@@ -13,8 +13,45 @@ function sshd_restart {
 
 function config_ssh {
 	#Option 3a
-	#code
-	echo "Under contraction"
+	#Making a backup
+	cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+
+	echo "Would you like to change SSH's port number? [y|n]: "
+	read SSH_ANSWER1
+	echo "Would you like to disable root? [y|n]: "
+	read SSH_ANSWER1_1
+
+	if [[ $SSH_ANSWER1 == 'y' || $SSH_ANSWER1 == 'Y' ]]
+	then
+		echo "Would you like to use port 222? [y|n]: "
+		read SSH_ANSWER2
+		if [[ $SSH_ANSWER2 == 'y' || $SSH_ANSWER2 == 'Y' ]]
+		then
+			#Use port 222
+			sed -i 's/\#Port\ 22/Port\ 222/g' /etc/ssh/sshd_config
+			echo "---------------------------------"
+			echo "SSH's port number changed to 222!"
+			echo "---------------------------------"
+		else
+			#Do not use port 222 and prompt the user for their port number of choice
+			echo "Understood, which port number would you like to use? [Please enter the port number]: "
+			read SSH_ANSWER3
+			sed -i s/\#Port\ 22/Port\ $SSH_ANSWER3/g /etc/ssh/sshd_config
+			echo "-----------------------------------------"
+			echo "SSH's port number changed to $SSH_ANSWER3"
+			echo "-----------------------------------------"
+		fi
+	else
+		echo "-------------------------"
+		echo "Leaving SSH's port on 22!"
+		echo "-------------------------"
+	fi
+	if [[ $SSH_ANSWER1_1 == 'y' || $SSH_ANSWER1_1 == 'Y' ]]
+	then
+		echo "Allow root login"
+	else
+		echo "Disable root login"
+	fi
 }
 
 function ufw_installed {
@@ -231,6 +268,10 @@ function show_ports {
 	echo "-------------------------------"
 }
 
+function revert_changes {
+	rm /etc/ssh/sshd_config && cp /etc/ssh/sshd_config.bak /etc/ssh/sshd_config
+}
+
 if [ $EUID != 0 ]; then
     sudo "$0" "$@"
     exit $?
@@ -243,6 +284,7 @@ do
 	echo "1a) SSHd status"
 	echo "2a) SSHd restart"
 	echo "3a) Configure SSH"
+	echo "4a) Revert changes"
 	echo "---------------------------"
 	echo "FIREWALL OPTIONS"
 	echo "1b) UFW status"
@@ -278,10 +320,11 @@ do
 			echo "---------------------"
 			;;
 
-#		4a)
-#			#extra
-#			#function
-#			;;
+		4a)	revert_changes
+			echo "-----------------"
+			echo "Changes reverted!"
+			echo "-----------------"
+			;;
 
 		1b)
 			ufw_status
