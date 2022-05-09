@@ -14,6 +14,10 @@ function sshd_restart {
 function config_ssh {
 	#Option 3a
 	#Making a backup
+<<<<<<< HEAD
+=======
+	
+>>>>>>> passwordless
 	ls /etc/ssh/sshd_config.bk &> /dev/null
 	if [ $? == "0" ]
 	then
@@ -113,6 +117,7 @@ function config_ssh {
 		echo "---------------------------"
 	fi
 
+<<<<<<< HEAD
 	echo "Would you like to disable password login and enable keypair auth? [y|n]: "
 	read $SSH_ANSWER7
 	if [[ $SSH_ANSWER7 == 'y' || $SSH_ANSWER7 == 'Y' ]]
@@ -152,6 +157,9 @@ function config_ssh {
 		echo "------------------------------"
 	fi
 
+=======
+	## Passwordless - disabling plain passwd login and enabling a login using a keypair
+>>>>>>> passwordless
 
 	echo "-----------------------------------------------------------------------------"
 	echo "Please reset the SSH daemon(service) in order for the changes to take effect!"
