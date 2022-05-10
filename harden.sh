@@ -434,28 +434,16 @@ fi
 
 while true
 do
-	echo "-----------------------------"
-	echo "SSH OPTIONS"
-	echo "1a) SSHd status"
-	echo "2a) SSHd restart"
-	echo "3a) Configure SSH"
-	echo "4a) Revert changes"
-	echo "-----------------------------"
-	echo "FIREWALL OPTIONS"
-	echo "1b) UFW status"
-	echo "2b) UFW enable"
-	echo "3b) UFW disable"
-	echo "4b) Configure UFW"
-	echo "5b) Allow/Deny inbound port"
-	echo "6b) Show Allowed/Denied ports"
-	echo "-----------------------------"
-	echo "EXTRAS"
-	echo "1c) Ban malicious ssh logins"
-	echo "2c) Show banned IPs"
-	echo "-----------------------------"
-	echo "c) Clear terminal"
-	echo "x) Exit"
-	echo "-----------------------------"
+	echo "----------------------------------------------------------------------------------"
+	echo "SSH OPTIONS          |   FIREWALL OPTIONS    |   5b) Allow/Deny inbound port     |"        
+	echo "1a) SSHd status      |   1b) UFW status      |   6b) Show Allowed/Denied ports   |"   	 
+	echo "2a) SSHd restart     |   2b) UFW enable      |   EXTRAS                          |"
+	echo "3a) Configure SSH    |   3b) UFW disable     |   1c) Ban malicious ssh logins    |"
+	echo "4a) Revert changes   |   4b) Configure UFW   |   2c) Show banned IPs             |"  
+	echo "----------------------------------------------------------------------------------"
+	echo "c) Clear terminal    |   x) Exit             |                                   |" 
+	echo "----------------------------------------------------------------------------------"
+
 	read -p "Please make your selection: [ex. 1a] " ANSWER
 	echo
 	case $ANSWER in 
