@@ -13,3 +13,5 @@ Hope this helps someone!
 ```
 wget https://raw.githubusercontent.com/v-filip/harden.sh/main/harden.sh && sudo chmod +x harden.sh && ./harden.sh
 ```
+
+Tested and working on Debian, which means that it should work on most Debian based distros like Ubuntu for example.
