@@ -8,4 +8,8 @@ Primary reason for making this script is that everytime I create a VPS and want 
 
 Hope this helps someone!
 
+**Get Started**
 
+```
+wget https://raw.githubusercontent.com/v-filip/harden.sh/main/harden.sh && sudo chmod +x harden.sh && ./harden.sh
+```
