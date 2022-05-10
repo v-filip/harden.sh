@@ -374,6 +374,59 @@ function revert_changes {
 	rm /etc/ssh/sshd_config && cp /etc/ssh/sshd_config.bk /etc/ssh/sshd_config
 }
 
+function ban_ssh {
+	echo "Would you like to install a package called Fail2Ban will will imporove the security of your SSH? [y|n]: "
+	read BAN_SSH_ANSWER1
+
+	if [[ $BAN_SSH_ANSWER1 == 'y' || $BAN_SSH_ANSWER1 == 'Y' ]]
+	then
+		apt install fail2ban -y &> /dev/null
+		if [ $? == 0 ]
+		then
+			echo "Which port do you use for your ssh? [Please enter the port number ex. 22]: "
+			read BAN_SSH_PORT
+			touch /etc/fail2ban/jail.local && echo "[DEFAULT]
+bantime = 24h
+ignoreip = 127.0.0.1/8
+ignoreself = true
+
+[sshd]
+enabled = true
+port = $BAN_SSH_PORT
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 3" > /etc/fail2ban/jail.local
+			systemctl restart fail2ban || service fail2ban restart
+			if [ $? == "0" ]
+			then
+				echo "-------------------------------------------------------------------------"
+				echo "Fail2Ban daemon (service) restarted in order to apply the config changes!"
+				echo "-------------------------------------------------------------------------"
+			else
+				echo "---------------------------------------------------------------------------------------------------"
+				echo "There was an issue during the process of restarting the daemon, please restart the daemon manually!"
+				echo "---------------------------------------------------------------------------------------------------"
+			fi
+			echo "----------------------------------------------------------------------------------------------------"
+			echo "Done! SSH ban rules setup! Every times someone unsuccessfully fails to login three times in the row,"
+		       	echo "they'll be banned for 24 hours!"
+			echo "----------------------------------------------------------------------------------------------------"
+		else
+			echo "--------------------------------------------------------------------"
+			echo "Something went wrong during the installation of Fail2Ban! Exiting..."
+			echo "--------------------------------------------------------------------"
+		fi
+	else
+		echo "------------------"
+		echo "Skipping the step!"
+		echo "------------------"
+	fi
+}
+
+function ban_log {
+	echo "temp for showing fail2ban banned ips!"
+}
+
 if [ $EUID != 0 ]; then
     sudo "$0" "$@"
     exit $?
@@ -381,13 +434,13 @@ fi
 
 while true
 do
-	echo "---------------------------"
+	echo "-----------------------------"
 	echo "SSH OPTIONS"
 	echo "1a) SSHd status"
 	echo "2a) SSHd restart"
 	echo "3a) Configure SSH"
 	echo "4a) Revert changes"
-	echo "---------------------------"
+	echo "-----------------------------"
 	echo "FIREWALL OPTIONS"
 	echo "1b) UFW status"
 	echo "2b) UFW enable"
@@ -395,9 +448,14 @@ do
 	echo "4b) Configure UFW"
 	echo "5b) Allow/Deny inbound port"
 	echo "6b) Show Allowed/Denied ports"
+	echo "-----------------------------"
+	echo "EXTRAS"
+	echo "1c) Ban malicious ssh logins"
+	echo "2c) Show banned IPs"
+	echo "-----------------------------"
 	echo "c) Clear terminal"
 	echo "x) Exit"
-	echo "---------------------------"
+	echo "-----------------------------"
 	read -p "Please make your selection: [ex. 1a] " ANSWER
 	echo
 	case $ANSWER in 
@@ -453,6 +511,14 @@ do
 
 		6b)
 			show_ports
+			;;
+
+		1c)
+			ban_ssh
+			;;
+
+		2c)
+			ban_log
 			;;
 
 		c)
