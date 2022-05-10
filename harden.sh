@@ -70,6 +70,11 @@ function config_ssh {
 
 	if [[ $SSH_ANSWER4 == 'y' || $SSH_ANSWER4 == 'Y' ]]
 	then
+		echo "Before root login gets disabled, which users would you allow to login? [Please enter the name of the user]"
+		read SSH_ANSWER_USER
+
+		sed -i s/\#StrictModes\ yes/AllowUsers\ $TEST_USER/g /etc/ssh/sshd_config
+
 		sed -i 's/PermitRootLogin\ yes/PermitRootLogin\ no/g' /etc/ssh/sshd_config
 		echo "-------------------"
 		echo "Root login disabled"
@@ -80,7 +85,7 @@ function config_ssh {
 		echo "---------------------------"
 	fi
 
-	echo "Would you that ssh connection terminates after a certion amount of time left idle? [y|n]: ]"
+	echo "Would you that ssh connection terminates after a certion amount of time left idle? [y|n]: "
 	read SSH_ANSWER5
 
 	if [[ $SSH_ANSWER5 == 'y' || $SSH_ANSWER5 == 'Y' ]]
