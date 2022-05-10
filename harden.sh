@@ -424,7 +424,7 @@ maxretry = 3" > /etc/fail2ban/jail.local
 }
 
 function ban_log {
-	echo "temp for showing fail2ban banned ips!"
+	grep "Ban" /var/log/fail2ban.log | awk '{print $1 "(" $2 ")" "  |   " $7 "  " $8 " " $9}'
 }
 
 if [ $EUID != 0 ]; then
