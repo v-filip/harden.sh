@@ -73,7 +73,7 @@ function config_ssh {
 		echo "Before root login gets disabled, which users would you allow to login? [Please enter the name of the user]"
 		read SSH_ANSWER_USER
 
-		sed -i s/\#StrictModes\ yes/AllowUsers\ $SSH_ANSWER_USER/g /etc/ssh/sshd_config
+		sed -i s/\#LoginGraceTime\ 2m/AllowUsers\ $SSH_ANSWER_USER/g /etc/ssh/sshd_config
 
 		sed -i 's/PermitRootLogin\ yes/PermitRootLogin\ no/g' /etc/ssh/sshd_config
 		echo "-------------------"
