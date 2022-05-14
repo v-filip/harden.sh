@@ -385,6 +385,9 @@ function ban_ssh {
 
 	if [[ $BAN_SSH_ANSWER1 == 'y' || $BAN_SSH_ANSWER1 == 'Y' ]]
 	then
+		echo "------------------------------"
+		echo "Installing Fail2Ban pachage..."
+		echo "------------------------------"
 		apt install fail2ban -y &> /dev/null
 		if [ $? == 0 ]
 		then
